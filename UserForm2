@@ -1,0 +1,138 @@
+Private Sub Label1_Click()
+
+End Sub
+
+Private Sub TextBox2_Change()
+
+End Sub
+
+Private Sub Userform_initialize()
+    
+    Dim arrData As Variant, iLastRow As Integer
+    
+    With Worksheets("Kunden")
+        iLastRow = .Cells(.Rows.Count, 1).End(xlUp).Row
+        arrData = .Range(.Cells(1, 1), .Cells(iLastRow, 3)).Value
+    End With
+        
+    With ListBox1
+        .ColumnCount = 1
+        .ColumnWidths = "10cm;"
+        .ColumnHeads = True
+        .List() = arrData
+        .ListIndex = .ListCount - 1
+    End With
+ 
+End Sub
+
+Private Sub TextBox1_Change()
+
+    Dim arrData As Variant, arrData2 As Variant
+    Dim iLastRow As Integer
+    
+    With Worksheets("Kunden")
+        iLastRow = .Cells(.Rows.Count, 1).End(xlUp).Row
+        arrData = .Range(.Cells(1, 1), .Cells(iLastRow, 3)).Value
+    End With
+    
+    If Not Trim(TextBox1) = Empty Then
+        arrData2 = filter2dArray(arrData, "*" & TextBox1.Text & "*")
+    End If
+    
+    If VarType(arrData2) = Empty Then
+        ListBox1.Clear
+    Else
+        ListBox1.List() = arrData2
+    End If
+End Sub
+
+Function filter2dArray(sourceArr As Variant, matchStr As String) As Variant
+    Dim matchArrIndex As Variant, splitArr As Variant
+    Dim i As Integer, outerindex As Integer, innerIndex As Integer, tempArrayIndex As Integer, _
+CurrIndex As Integer, stringLength As Integer, matchType As Integer
+    Dim increaseIndex As Boolean
+    Dim actualStr As String
+    
+    splitArr = Split(matchStr, "*")
+    
+    On Error GoTo errorHandler
+    
+    If UBound(splitArr) = 0 Then
+        matchType = 0 'Exact Match
+        actualStr = matchStr
+    ElseIf UBound(splitArr) = 1 And splitArr(1) = "" Then
+        matchType = 1 'Starts With
+        actualStr = splitArr(0)
+    ElseIf UBound(splitArr) = 1 And splitArr(0) = "" Then
+        matchType = 2 'ends With
+        actualStr = splitArr(1)
+    ElseIf UBound(splitArr) = 2 And splitArr(0) = "" And splitArr(2) = "" Then
+        matchType = 3 'contains
+        actualStr = splitArr(1)
+    Else
+        MsgBox "Incorrect match provided"
+        Exit Function
+    End If
+    'start index
+    i = LBound(sourceArr, 1)
+    'resize array for matched values
+    ReDim matchArrIndex(LBound(sourceArr, 1) To UBound(sourceArr, 1)) As Variant
+    'outer loop
+    For outerindex = LBound(sourceArr, 1) To UBound(sourceArr, 1)
+    'inner loop
+        For innerIndex = LBound(sourceArr, 2) To UBound(sourceArr, 2)
+            'if string matches with array elements
+            
+            If (matchType = 0 And sourceArr(outerindex, innerIndex) = actualStr) Or _
+                (matchType = 1 And Left(sourceArr(outerindex, innerIndex), Len(actualStr)) = _
+actualStr) Or _
+                (matchType = 2 And Right(sourceArr(outerindex, innerIndex), Len(actualStr)) = _
+actualStr) Or _
+                (matchType = 3 And InStr(sourceArr(outerindex, innerIndex), actualStr) <> 0) _
+Then
+                increaseIndex = True
+                matchArrIndex(i) = outerindex
+            End If
+            
+        Next
+        
+        If increaseIndex Then
+            tempArrayIndex = tempArrayIndex + 1
+            increaseIndex = False
+            i = i + 1
+        End If
+    Next
+    'if no matches found, exit the function
+    If tempArrayIndex = 0 Then
+        Exit Function
+    End If
+    If LBound(sourceArr, 1) = 0 Then
+        tempArrayIndex = tempArrayIndex - 1
+    End If
+    'resize temp array
+    ReDim tempArray(LBound(sourceArr, 1) To tempArrayIndex, LBound(sourceArr, 2) To UBound( _
+sourceArr, 2)) As Variant
+    CurrIndex = LBound(sourceArr, 1)
+    Dim j As Integer
+    j = LBound(matchArrIndex)
+    'store values in temp array
+    For i = CurrIndex To UBound(tempArray)
+        For innerIndex = LBound(sourceArr, 2) To UBound(sourceArr, 2)
+            tempArray(i, innerIndex) = sourceArr(matchArrIndex(j), innerIndex)
+        Next
+        j = j + 1
+    Next
+    filter2dArray = tempArray
+    Exit Function
+errorHandler:
+    MsgBox "Error :" & Err.Description
+End Function
+
+Private Sub ListBox1_DblClick(ByVal Cancel As MSForms.ReturnBoolean)
+If Range("A2") = "" Then
+    Range("A2") = ListBox1.Text
+
+End If
+End Sub
+
+
