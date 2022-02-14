@@ -1,0 +1,6 @@
+Sub automateword()
+    Set wordapp = CreateObject("word.Application")
+    wordapp.documents.Open "C:\Users\LukasGötzkes\Desktop\Cashback Tool\Word Presets\Cashbackvereinbarung_Preset.docm"
+    wordapp.Visible = True
+End Sub
+
