@@ -1,0 +1,8 @@
+Option Explicit
+
+Sub Ausblenden()
+    Columns("M:N").EntireColumn.Hidden = True
+End Sub
+Sub Einblenden()
+    Columns("M:N").EntireColumn.Hidden = False
+End Sub
