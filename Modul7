@@ -1,0 +1,3 @@
+Function BenutzerEXCEL()
+BenutzerEXCEL = Application.UserName
+End Function
