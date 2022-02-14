@@ -1,0 +1,208 @@
+Private Sub CommandButton1_Click()
+
+End Sub
+
+Private Sub Label1_Click()
+
+End Sub
+
+Private Sub Label2_Click()
+
+End Sub
+
+Private Sub Label3_Click()
+
+End Sub
+
+Private Sub Label5_Click()
+
+End Sub
+
+Private Sub Label6_Click()
+
+End Sub
+
+Private Sub Label7_Click()
+
+End Sub
+
+Private Sub ListBox1_Click()
+
+End Sub
+
+Private Sub Userform_initialize()
+    
+    Dim arrData As Variant, iLastRow As Integer
+    
+    With Worksheets("Rahmenverträge")
+        iLastRow = .Cells(.Rows.Count, 1).End(xlUp).Row
+        arrData = .Range(.Cells(2, 7), .Cells(iLastRow, 3)).Value
+    End With
+        
+    With ListBox1
+        .ColumnCount = 5
+        .ColumnWidths = "1cm;9cm;3cm;3cm;10cm;"
+        .ColumnHeads = False
+        .List() = arrData
+        .ListIndex = .ListCount - 1
+    End With
+ 
+End Sub
+
+Private Sub TextBox1_Change()
+
+    Dim arrData As Variant, arrData2 As Variant
+    Dim iLastRow As Integer
+    
+    With Worksheets("Rahmenverträge")
+        iLastRow = .Cells(.Rows.Count, 1).End(xlUp).Row
+        arrData = .Range(.Cells(2, 6), .Cells(iLastRow, 3)).Value
+    End With
+    
+    If Not Trim(TextBox1) = Empty Then
+        arrData2 = filter2dArray(arrData, "*" & TextBox1.Text & "*")
+    End If
+    
+    If VarType(arrData2) = Empty Then
+        ListBox1.Clear
+    Else
+        ListBox1.List() = arrData2
+    End If
+End Sub
+
+Function filter2dArray(sourceArr As Variant, matchStr As String) As Variant
+    Dim matchArrIndex As Variant, splitArr As Variant
+    Dim i As Integer, outerindex As Integer, innerIndex As Integer, tempArrayIndex As Integer, _
+CurrIndex As Integer, stringLength As Integer, matchType As Integer
+    Dim increaseIndex As Boolean
+    Dim actualStr As String
+    
+    splitArr = Split(matchStr, "*")
+    
+    On Error GoTo errorHandler
+    
+    If UBound(splitArr) = 0 Then
+        matchType = 0 'Exact Match
+        actualStr = matchStr
+    ElseIf UBound(splitArr) = 1 And splitArr(1) = "" Then
+        matchType = 1 'Starts With
+        actualStr = splitArr(0)
+    ElseIf UBound(splitArr) = 1 And splitArr(0) = "" Then
+        matchType = 2 'ends With
+        actualStr = splitArr(1)
+    ElseIf UBound(splitArr) = 2 And splitArr(0) = "" And splitArr(2) = "" Then
+        matchType = 3 'contains
+        actualStr = splitArr(1)
+    Else
+        MsgBox "Incorrect match provided"
+        Exit Function
+    End If
+    'start index
+    i = LBound(sourceArr, 1)
+    'resize array for matched values
+    ReDim matchArrIndex(LBound(sourceArr, 1) To UBound(sourceArr, 1)) As Variant
+    'outer loop
+    For outerindex = LBound(sourceArr, 1) To UBound(sourceArr, 1)
+    'inner loop
+        For innerIndex = LBound(sourceArr, 2) To UBound(sourceArr, 2)
+            'if string matches with array elements
+            
+            If (matchType = 0 And sourceArr(outerindex, innerIndex) = actualStr) Or _
+                (matchType = 1 And Left(sourceArr(outerindex, innerIndex), Len(actualStr)) = _
+actualStr) Or _
+                (matchType = 2 And Right(sourceArr(outerindex, innerIndex), Len(actualStr)) = _
+actualStr) Or _
+                (matchType = 3 And InStr(sourceArr(outerindex, innerIndex), actualStr) <> 0) _
+Then
+                increaseIndex = True
+                matchArrIndex(i) = outerindex
+            End If
+            
+        Next
+        
+        If increaseIndex Then
+            tempArrayIndex = tempArrayIndex + 1
+            increaseIndex = False
+            i = i + 1
+        End If
+    Next
+    'if no matches found, exit the function
+    If tempArrayIndex = 0 Then
+        Exit Function
+    End If
+    If LBound(sourceArr, 1) = 0 Then
+        tempArrayIndex = tempArrayIndex - 1
+    End If
+    'resize temp array
+    ReDim tempArray(LBound(sourceArr, 1) To tempArrayIndex, LBound(sourceArr, 2) To UBound( _
+sourceArr, 2)) As Variant
+    CurrIndex = LBound(sourceArr, 1)
+    Dim j As Integer
+    j = LBound(matchArrIndex)
+    'store values in temp array
+    For i = CurrIndex To UBound(tempArray)
+        For innerIndex = LBound(sourceArr, 2) To UBound(sourceArr, 2)
+            tempArray(i, innerIndex) = sourceArr(matchArrIndex(j), innerIndex)
+        Next
+        j = j + 1
+    Next
+    filter2dArray = tempArray
+    Exit Function
+errorHandler:
+    MsgBox "Error :" & Err.Description
+End Function
+
+Private Sub ListBox1_DblClick(ByVal Cancel As MSForms.ReturnBoolean)
+
+If Range("B10") = "" Then
+    Range("B10") = ListBox1.Text
+ElseIf Range("B11") = "" Then
+    Range("B11") = ListBox1.Text
+    ElseIf Range("B12") = "" Then
+    Range("B12") = ListBox1.Text
+ElseIf Range("B13") = "" Then
+    Range("B13") = ListBox1.Text
+ElseIf Range("B14") = "" Then
+    Range("B14") = ListBox1.Text
+ElseIf Range("B15") = "" Then
+    Range("B15") = ListBox1.Text
+ElseIf Range("B16") = "" Then
+    Range("B16") = ListBox1.Text
+    ElseIf Range("B17") = "" Then
+    Range("B17") = ListBox1.Text
+    ElseIf Range("B18") = "" Then
+    Range("B18") = ListBox1.Text
+ElseIf Range("B19") = "" Then
+    Range("B19") = ListBox1.Text
+ElseIf Range("B20") = "" Then
+    Range("B20") = ListBox1.Text
+ElseIf Range("B21") = "" Then
+    Range("B21") = ListBox1.Text
+ElseIf Range("B22") = "" Then
+    Range("B22") = ListBox1.Text
+    ElseIf Range("B23") = "" Then
+    Range("B23") = ListBox1.Text
+ElseIf Range("B24") = "" Then
+    Range("B24") = ListBox1.Text
+ElseIf Range("B25") = "" Then
+    Range("B25") = ListBox1.Text
+ElseIf Range("B26") = "" Then
+    Range("B26") = ListBox1.Text
+    ElseIf Range("B27") = "" Then
+    Range("B27") = ListBox1.Text
+    ElseIf Range("B28") = "" Then
+    Range("B28") = ListBox1.Text
+ElseIf Range("B29") = "" Then
+    Range("B29") = ListBox1.Text
+ElseIf Range("B30") = "" Then
+    Range("B30") = ListBox1.Text
+ElseIf Range("B31") = "" Then
+    Range("B31") = ListBox1.Text
+ElseIf Range("B32") = "" Then
+    Range("B32") = ListBox1.Text
+    ElseIf Range("B33") = "" Then
+    Range("B33") = ListBox1.Text
+ElseIf Range("B34") = "" Then
+    Range("B34") = ListBox1.Text
+End If
+End Sub
