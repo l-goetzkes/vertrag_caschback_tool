@@ -1,0 +1,5 @@
+Sub Schaltfläche3_Klicken()
+
+Range("B10:B37,G10:G37").ClearContents
+End Sub
+
