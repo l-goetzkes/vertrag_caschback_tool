@@ -1,0 +1,25 @@
+Sub AutoOpen()
+'
+' AutoExec Makro
+'
+'
+    ActiveDocument.MailMerge.MainDocumentType = wdFormLetters
+    ActiveDocument.MailMerge.OpenDataSource Name:= _
+        "C:\Users\LukasGötzkes\Desktop\Cashback Tool\Cashback_Tool_v_0.9.xlsm", _
+        ConfirmConversions:=False, ReadOnly:=False, LinkToSource:=True, _
+        AddToRecentFiles:=False, PasswordDocument:="", PasswordTemplate:="", _
+        WritePasswordDocument:="", WritePasswordTemplate:="", Revert:=False, _
+        Format:=wdOpenFormatAuto, Connection:= _
+        "Provider=Microsoft.ACE.OLEDB.12.0;User ID=Admin;Data Source=C:\Users\LukasGötzkes\Desktop\Cashback Tool\Cashback_Tool_v_0.9.xlsm;Mode=Read;Extended Properties=""HDR=YES;IMEX=1;"";Jet OLEDB:System database="""";Jet OLEDB:Registry Path="""";Jet OLEDB:Engine Type=" _
+        , SQLStatement:="SELECT * FROM `Input$`", SQLStatement1:="", SubType:= _
+        wdMergeSubTypeAccess
+    With ActiveDocument.MailMerge
+        .Destination = wdSendToPrinter
+        .SuppressBlankLines = True
+        With .DataSource
+            .FirstRecord = wdDefaultFirstRecord
+            .LastRecord = wdDefaultLastRecord
+        End With
+        .Execute Pause:=False
+    End With
+End Sub
